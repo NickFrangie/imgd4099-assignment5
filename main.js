@@ -21,21 +21,26 @@ async function main() {
 	const vants        = new Float32Array( NUM_AGENTS * NUM_PROPERTIES ) // hold vant info
 	
 	for( let i = 0; i < NUM_AGENTS * NUM_PROPERTIES; i+= NUM_PROPERTIES ) {
-		vants[ i ]   = Math.floor( Math.random() * W )
-		vants[ i+1 ] = Math.floor( Math.random() * H )
-		vants[ i+2 ] = 0 // this is used to hold direction
-		vants[ i+3 ] = 0 // this could be used to hold vant "type"
+		vants[ i ]   = Math.floor( Math.random() * W );
+		vants[ i+1 ] = Math.floor( Math.random() * H );
+		vants[ i+2 ] = 0; // this is used to hold direction
+		vants[ i+3 ] = (i / 4) % 3; // Sets type to 0, 1, 2
 	}
-
+  
 	// Seagull
 	sg.buffers({
-		vants:vants,
-		pheromones:pheromones,
+		vants,
+		pheromones,
 		vants_render
-	  })
+  })
+  .uniforms({
+    grid_size: GRID_SIZE,
+    width: W,
+    height: H
+  })
 	.backbuffer( false )
-	.compute( compute_shader, 1 )
-	.render( render_shader )
+	.compute( compute, 1 )
+	.render( render )
 	.onframe( ()=> sg.buffers.vants_render.clear() )
 	.run( 1, 100 )
 }
